@@ -1,6 +1,7 @@
 const refs = {
   container: document.querySelector('#box'),
-  button: document.querySelector('button'),
+  container2: document.querySelector('#box2'),
+  button: document.querySelectorAll('button'),
 };
 
 export { refs };

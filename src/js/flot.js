@@ -1,10 +1,9 @@
 import { refs } from './refs';
-// const e = 'color-inherit';
+
 console.log();
 function flot(index) {
   if (index === 1) {
     const a11 = document.querySelector('#a11').children;
-    console.dir(a11[3]);
     a11[1].classList.add('color-red');
     a11[2].classList.add('color-red');
     a11[3].classList.add('color-red');
@@ -26,7 +25,6 @@ function flot(index) {
     a19[4].classList.add('color-red');
   } else {
     const a11 = document.querySelector('#a11').children;
-    console.dir(a11[3]);
     a11[1].classList.remove('color-red');
     a11[2].classList.remove('color-red');
     a11[3].classList.remove('color-red');
