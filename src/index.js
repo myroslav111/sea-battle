@@ -9,6 +9,8 @@ import { fetchData, patchData } from './js/api';
 import { dataForServ1, dataForServ2 } from './js/war';
 
 let counter = 0;
+let flag;
+
 renderGrid(1, line(10), counter);
 
 refs.button[0].addEventListener('click', addShip);
@@ -55,8 +57,18 @@ async function addShip(e) {
             console.dir(el);
           }
         });
-        await patchData(1, dataForServ1(map));
+        const respons = await fetchData(1);
+        console.log(respons.data.user1.length);
+        if (respons.data.user1.length === 0) {
+          await patchData(1, dataForServ1(map));
+          flag = true;
+        } else {
+          await patchData(2, dataForServ1(map));
+        }
+        console.log(respons.data.user1.length);
+
         console.log(map);
+        refs.button[0].textContent = 'твоя карта';
       }
       break;
 
@@ -92,7 +104,11 @@ function shot(e) {
         }
       });
       console.log(map);
-      patchData(2, dataForServ1(map));
+      if (flag) {
+        patchData(1, dataForServ2(map));
+      } else {
+        patchData(2, dataForServ2(map));
+      }
     }
     counterShot += 1;
     return;

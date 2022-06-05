@@ -5,6 +5,7 @@ const URL = 'https://629b670d656cea05fc38b427.mockapi.io/sea-battle';
 async function fetchData(id) {
   try {
     const response = await axios.get(`${URL}/${id}`);
+    return response;
   } catch (error) {
     console.log(error);
   }
