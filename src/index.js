@@ -4,7 +4,9 @@ import { refs } from './js/refs';
 import Notiflix from 'notiflix';
 import { renderGrid } from './js/render-grid';
 import { line } from './js/line';
-import './js/api';
+import { fetchData, patchData } from './js/api';
+// import api from './js/api';
+import { dataForServ1, dataForServ2 } from './js/war';
 
 let counter = 0;
 renderGrid(1, line(10), counter);
@@ -13,7 +15,7 @@ refs.button[0].addEventListener('click', addShip);
 refs.button[1].addEventListener('click', shot);
 
 refs.button[0].textContent = 'start';
-function addShip(e) {
+async function addShip(e) {
   counter += 1;
   switch (counter) {
     case 1:
@@ -32,7 +34,7 @@ function addShip(e) {
           arr.push(el.checked);
         }
       });
-      if (arr.length !== 1) {
+      if (arr.length !== 2) {
         Notiflix.Notify.failure('Qui timide rogat docet negare');
         counter = 2;
         return;
@@ -43,9 +45,21 @@ function addShip(e) {
         refs.button[0].setAttribute('disabled', 'true');
         refs.button[1].removeAttribute('disabled');
         counter = 0;
-        // console.log(arr1.forEach(()));
+        const map = [];
+        console.log();
+        arr1.forEach((el, index, ar) => {
+          if (el.checked) {
+            map.push(index);
+            console.dir(ar);
+            console.dir(index);
+            console.dir(el);
+          }
+        });
+        await patchData(1, dataForServ1(map));
+        console.log(map);
       }
       break;
+
     default:
       console.log('чет пошло не так');
   }
@@ -57,6 +71,7 @@ function shot(e) {
   if (counter === counterShot) {
     let arr = [];
     const checbox = refs.container2.querySelectorAll('#cbx');
+    const checbox1 = refs.container.querySelectorAll('#cbx');
     checbox.forEach(el => {
       if (el.checked) {
         arr.push(el.checked);
@@ -68,12 +83,16 @@ function shot(e) {
       return;
     }
     Notiflix.Notify.success('Sol lucet omnibus');
+    const map = [];
     if (arr.length === counterShot) {
-      checbox.forEach(el => {
+      checbox.forEach((el, index) => {
         if (el.checked) {
           el.setAttribute('disabled', 'true');
+          map.push(index);
         }
       });
+      console.log(map);
+      patchData(2, dataForServ1(map));
     }
     counterShot += 1;
     return;
