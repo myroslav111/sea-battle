@@ -94,6 +94,7 @@ function shot(e) {
       counter -= 1;
       return;
     }
+    console.log('fghjk');
     Notiflix.Notify.success('Sol lucet omnibus');
     const map = [];
     if (arr.length === counterShot) {
