@@ -1,6 +1,6 @@
 import { refs } from './refs';
 
-console.log();
+
 function flot(index) {
   if (index === 1) {
     const a11 = document.querySelector('#a11').children;

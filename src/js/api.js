@@ -10,7 +10,6 @@ async function fetchData(id) {
     console.log(error);
   }
 }
-// fetchData(1);
 
 async function patchData(id, arr) {
   try {

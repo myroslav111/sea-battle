@@ -9,9 +9,12 @@ import { fetchData, patchData } from './js/api';
 import { dataForServ1, dataForServ2 } from './js/war';
 
 let counter = 0;
-let flag;
+// let flag = ;
 
 renderGrid(1, line(10), counter);
+
+const arr1 = refs.container.querySelectorAll('#cbx');
+arr1.forEach(el => el.setAttribute('disabled', 'true'));
 
 refs.button[0].addEventListener('click', addShip);
 refs.button[1].addEventListener('click', shot);
@@ -19,6 +22,28 @@ refs.button[1].addEventListener('click', shot);
 refs.button[0].textContent = 'start';
 async function addShip(e) {
   counter += 1;
+  const respons = await fetchData(1);
+
+  if (respons.data.user1.length !== 0 && counter === 1) {
+    respons.data.user1.map(el => (arr1[el].checked = true));
+
+    renderGrid(1, line(10), counter);
+    arr1.forEach(el => el.setAttribute('disabled', 'true'));
+    refs.button[0].setAttribute('disabled', 'true');
+    refs.button[1].removeAttribute('disabled');
+    // counter = 0;
+    refs.button[0].textContent = 'твоя карта';
+
+    const checbox = refs.container2.querySelectorAll('#cbx');
+    respons.data.user2.forEach(el => {
+      checbox[el].checked = true;
+      checbox[el].setAttribute('disabled', 'true');
+    });
+    counter = respons.data.user2.length;
+    return;
+  }
+
+  arr1.forEach(el => el.removeAttribute('disabled'));
   switch (counter) {
     case 1:
       refs.button[0].textContent = 'твой флот';
@@ -42,32 +67,20 @@ async function addShip(e) {
         return;
       } else {
         renderGrid(1, line(10), counter);
-        const arr1 = refs.container.querySelectorAll('#cbx');
         arr1.forEach(el => el.setAttribute('disabled', 'true'));
         refs.button[0].setAttribute('disabled', 'true');
         refs.button[1].removeAttribute('disabled');
         counter = 0;
         const map = [];
-        console.log();
         arr1.forEach((el, index, ar) => {
           if (el.checked) {
             map.push(index);
-            console.dir(ar);
-            console.dir(index);
-            console.dir(el);
           }
         });
-        const respons = await fetchData(1);
-        console.log(respons.data.user1.length);
+
         if (respons.data.user1.length === 0) {
           await patchData(1, dataForServ1(map));
-          flag = true;
-        } else {
-          await patchData(2, dataForServ1(map));
         }
-        console.log(respons.data.user1.length);
-
-        console.log(map);
         refs.button[0].textContent = 'твоя карта';
       }
       break;
@@ -78,23 +91,36 @@ async function addShip(e) {
 }
 
 let counterShot = 1;
-function shot(e) {
+async function shot(e) {
   counter += 1;
+  const checbox = refs.container2.querySelectorAll('#cbx');
+  const checbox1 = refs.container.querySelectorAll('#cbx');
+  const getData_2 = await fetchData(2);
+  const getData_1 = await fetchData(1);
+
+  if (counter > 1) {
+    console.log(getData_2.data.user2);
+    getData_2.data.user2.forEach(el => {
+      if (arr1[el].checked) {
+        arr1[el].checked = false;
+        arr1[el].classList.add('color-red');
+      }
+      arr1[el].classList.add('color-green');
+    });
+  }
   if (counter === counterShot) {
     let arr = [];
-    const checbox = refs.container2.querySelectorAll('#cbx');
-    const checbox1 = refs.container.querySelectorAll('#cbx');
+
     checbox.forEach(el => {
       if (el.checked) {
         arr.push(el.checked);
       }
     });
-    if (arr.length !== counter) {
-      Notiflix.Notify.failure('Qui timide rogat docet negare');
+    if (arr.length !== counter || getData_2.data.user2.length !== getData_1.data.user2.length) {
+      Notiflix.Notify.failure('враг молчал');
       counter -= 1;
       return;
     }
-    console.log('fghjk');
     Notiflix.Notify.success('Sol lucet omnibus');
     const map = [];
     if (arr.length === counterShot) {
@@ -104,14 +130,20 @@ function shot(e) {
           map.push(index);
         }
       });
-      console.log(map);
-      if (flag) {
-        patchData(1, dataForServ2(map));
+
+      console.log(getData_2.data.user2.length, getData_1.data.user2.length);
+      if (getData_2.data.user2.length === getData_1.data.user2.length) {
+        try {
+          await patchData(1, dataForServ2(map));
+          Notiflix.Notify.success('1var');
+        } catch {
+          Notiflix.Notify.failure('1var');
+        }
       } else {
-        patchData(2, dataForServ2(map));
+        Notiflix.Notify.failure('getData_2 === getData_1');
+        return;
       }
     }
     counterShot += 1;
-    return;
   }
 }
